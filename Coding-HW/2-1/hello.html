@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom Cards</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .quote {
+            font-size: 24px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            color: #ffffff;
+        }
+        
+        .author {
+            font-size: 18px;
+            color: #9e9e9e;
+            font-weight: 500;
+        }
+        
+        button {
+            margin-top: 30px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Times New Roman', Times, serif;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <p class="quote" id="quote">读书破万卷，下笔如有神。</p>
+        <p class="author" id="author">— 杜甫</p>
+        <button onclick="newQuote()">新的名言</button>
+    </div>
+
+    <script>
+        const quotes = [
+            // 中国名言
+            { quote: "学而不思则罔，思而不学则殆。", author: "孔子" },
+            { quote: "己所不欲，勿施于人。", author: "孔子" },
+            { quote: "知之者不如好之者，好之者不如乐之者。", author: "孔子" },
+            { quote: "不患人之不己知，患不知人也。", author: "孔子" },
+            { quote: "千里之行，始于足下。", author: "老子" },
+            { quote: "上善若水，水善利万物而不争。", author: "老子" },
+            { quote: "人法地，地法天，天法道，道法自然。", author: "老子" },
+            { quote: "三人行，必有我师焉。", author: "孔子" },
+            { quote: "君子坦荡荡，小人长戚戚。", author: "孔子" },
+            { quote: "读书破万卷，下笔如有神。", author: "杜甫" },
+            
+            // 美国名言
+            { quote: "伟大的成就，来自为远大的目标所花费的巨大心血。", author: "亨利·戴维·梭罗" },
+            { quote: "每一次选择都是一次成长。", author: "埃莉诺·罗斯福" },
+            { quote: "最黑暗的时刻总在黎明之前。", author: "托马斯·潘恩" },
+            { quote: "若要获得智慧，必须终身学习。", author: "本杰明·富兰克林" },
+            { quote: "自由不是让你想做什么就做什么，而是让你不想做什么就不做什么。", author: "伍德罗·威尔逊" },
+            { quote: "如果你想走得快，一个人走；如果你想走得远，一群人走。", author: "拉尔夫·沃尔多·爱默生" },
+            { quote: "简单是终极的复杂。", author: "史蒂夫·乔布斯" },
+            { quote: "成功不是终点，失败也不是终结，最重要的是继续前进的勇气。", author: "温斯顿·丘吉尔" },
+            { quote: "宁可做过了后悔，也不要错过了后悔。", author: "马克·吐温" },
+            { quote: "我们必须接受失望，因为它是有限的，但千万不可失去希望，因为它是无穷的。", author: "马丁·路德·金" }
+        ];
+
+        function newQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById('quote').textContent = quotes[randomIndex].quote;
+            document.getElementById('author').textContent = "— " + quotes[randomIndex].author;
+        }
+
+        // 页面加载时显示随机名言
+        window.onload = newQuote;
+    </script>
+</body>
+</html>
