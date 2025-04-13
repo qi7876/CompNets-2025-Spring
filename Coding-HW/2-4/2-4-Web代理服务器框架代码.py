@@ -7,7 +7,7 @@ def Server(tcpClisock, addr):
 
     BUFSIZE = 1024
     print('Received a connection from:', addr)
-    data =  #Fill-in-start  #Fill-in-end
+    data = tcpClisock.recv(BUFSIZE).decode()
     print(data)
 
     if len(data):
@@ -16,7 +16,7 @@ def Server(tcpClisock, addr):
         print('getFile:',getFile)
 
         # Form a legal filename
-        filename =  #Fill-in-start  #Fill-in-end
+        filename = getFile.replace("/", "_")
         print('filename:',filename)
 
         # Check wether the file exist in the cache
@@ -26,29 +26,25 @@ def Server(tcpClisock, addr):
             f = open(filename,"r")
             CACHE_PAGE = f.read()
             # ProxyServer sends the cache to the client
-            #Fill-in-start
-            #Fill-in-end
+            tcpClisock.send(CACHE_PAGE.encode())
             print('Send the cache to the client')
             tcpClisock.close()
         else:
             print('File not exist')
             # Handling for file not found in cache
             # Create a socket on the ProxyServer
-            c =   #Fill-in-start  #Fill-in-end
+            c = socket(AF_INET, SOCK_STREAM)
             try:
                 # Connect to the WebServer socket to port 80
                 hostn = getFile.partition("/")[2].partition("/")[0]
-                #Fill-in-start
-                #Fill-in-end
+                c.connect((hostn, 80))
                 print('Connect to',hostn)
 
                 # Some information in client request must be replaced before it can be sent to the server
-                #Fill-in-start
-                #Fill-in-end
+                modifiedRequest = "GET " + getFile + " HTTP/1.0\r\n\r\n"
 
                 # Send the modified client request to the server
-                #Fill-in-start
-                #Fill-in-end
+                c.send(modifiedRequest.encode())
 
                 # Read the response into buffer
                 buff = c.recv(4096)
@@ -59,8 +55,8 @@ def Server(tcpClisock, addr):
                 print('Send to client\r\n')
                 # Create a new file to save the response in the cache for the requested file
                 tmpFile = open("./" + filename,"w")
-                #Fill-in-start
-                #Fill-in-end
+                tmpFile.write(buff.decode())
+                tmpFile.close()
             except:
                 print("Illegal request")
             tcpClisock.close()
@@ -70,8 +66,8 @@ if __name__ == '__main__':
 
     # Create a server socket, bind it to a port and start listening
     tcpSersock = socket(AF_INET, SOCK_STREAM)
-    #Fill-in-start
-    #Fill-in-end
+    tcpSersock.bind(('', 8888))
+    tcpSersock.listen(5)
 
     print("Ready to serve......\n")
     while True:

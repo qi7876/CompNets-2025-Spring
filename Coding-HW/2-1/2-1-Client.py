@@ -1,9 +1,9 @@
-from socket import *
+import socket
 import sys
 
 
-def http_get(host, port, file_path):
-    socket_connection = socket(AF_INET, SOCK_STREAM)
+def http_get(host: str, port: int, file_path: str):
+    socket_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
         socket_connection.connect((host, port))
