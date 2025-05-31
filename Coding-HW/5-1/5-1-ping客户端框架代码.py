@@ -7,6 +7,27 @@ import select
 import binascii
 
 ICMP_ECHO_REQUEST = 8
+ICMP_DEST_UNREACHABLE = 3
+
+# ICMP Destination Unreachable codes
+ICMP_NET_UNREACHABLE = 0
+ICMP_HOST_UNREACHABLE = 1
+ICMP_PROTOCOL_UNREACHABLE = 2
+ICMP_PORT_UNREACHABLE = 3
+ICMP_FRAGMENTATION_NEEDED = 4
+ICMP_SOURCE_ROUTE_FAILED = 5
+
+
+def get_icmp_error_message(icmp_code):
+    error_messages = {
+        ICMP_NET_UNREACHABLE: "Destination network unreachable",
+        ICMP_HOST_UNREACHABLE: "Destination host unreachable",
+        ICMP_PROTOCOL_UNREACHABLE: "Destination protocol unreachable",
+        ICMP_PORT_UNREACHABLE: "Destination port unreachable",
+        ICMP_FRAGMENTATION_NEEDED: "Fragmentation needed and DF set",
+        ICMP_SOURCE_ROUTE_FAILED: "Source route failed"
+    }
+    return error_messages.get(icmp_code, f"Unknown destination unreachable code: {icmp_code}")
 
 
 def checksum(string):
@@ -52,6 +73,8 @@ def receiveOnePong(mySocket, destAddr, ID, sequence, timeout):
         # Fetch the ICMP header from the IP packet
         icmpHeader = recPacket[ipHeaderLength:ipHeaderLength + 8]
         icmpType, icmpCode, icmpChecksum, icmpID, icmpSequence = struct.unpack("!BBHHH", icmpHeader)
+
+        # Handle ICMP Echo Reply
         if icmpType == 0 and icmpID == ID and icmpSequence == sequence:
             icmpData = recPacket[ipHeaderLength + 8:]
             data_bytes = len(icmpData)
@@ -63,6 +86,20 @@ def receiveOnePong(mySocket, destAddr, ID, sequence, timeout):
                 return rtt, ttl_value, data_bytes, source_ip
             except struct.error:
                 pass
+
+        # Handle ICMP Destination Unreachable
+        elif icmpType == ICMP_DEST_UNREACHABLE:
+            # Extract the original IP header and ICMP header from the ICMP data
+            originalIPHeader = recPacket[ipHeaderLength + 8:ipHeaderLength + 28]
+            if len(originalIPHeader) >= 20:
+                originalICMPHeader = recPacket[ipHeaderLength + 28:ipHeaderLength + 36]
+                if len(originalICMPHeader) >= 8:
+                    origIcmpType, origIcmpCode, origIcmpChecksum, origIcmpID, origIcmpSequence = struct.unpack("!BBHHH", originalICMPHeader)
+                    # Check if this is a response to our ping
+                    if origIcmpType == ICMP_ECHO_REQUEST and origIcmpID == ID and origIcmpSequence == sequence:
+                        error_msg = get_icmp_error_message(icmpCode)
+                        source_ip = addr[0]
+                        return None, None, None, source_ip, error_msg
         # Fill in end
 
         timeLeft = timeLeft - howLongInSelect
@@ -135,9 +172,14 @@ def ping(dest, count):
         # No pong packet, then display "Request timed out."
         # Receive pong packet, then display "Reply from host_ipaddr : bytes=… time=… TTL=…"
         if result:
-            rtt, ttl_value, data_bytes, ip_address = result
-            rtt_list.append(rtt)
-            print(f"Reply from {ip_address}: bytes={data_bytes} time={rtt:.3f}ms TTL={ttl_value}")
+            if len(result) == 4:  # Normal ping response
+                rtt, ttl_value, data_bytes, ip_address = result
+                rtt_list.append(rtt)
+                print(f"Reply from {ip_address}: bytes={data_bytes} time={rtt:.3f}ms TTL={ttl_value}")
+            elif len(result) == 5:  # ICMP error response
+                _, _, _, ip_address, error_msg = result
+                print(f"Reply from {ip_address}: {error_msg}")
+                loss += 1
         else:
             print("Request timed out.")
             loss += 1

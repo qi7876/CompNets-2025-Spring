@@ -1,0 +1,28 @@
+HTTP/1.1 200 OK
+Date: Fri, 30 May 2025 16:24:43 GMT
+Content-Type: application/json
+Content-Length: 469
+Connection: close
+Server: gunicorn/19.9.0
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+
+{
+  "args": {}, 
+  "data": "{\"test\": \"data\", \"proxy\": \"verification\"}", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Content-Length": "41", 
+    "Content-Type": "application/json", 
+    "Host": "httpbin.org", 
+    "User-Agent": "ProxyTest/1.0", 
+    "X-Amzn-Trace-Id": "Root=1-6839dbca-494cdfea67aa9ca90dcf96fd"
+  }, 
+  "json": {
+    "proxy": "verification", 
+    "test": "data"
+  }, 
+  "origin": "172.232.161.252", 
+  "url": "http://httpbin.org/post"
+}

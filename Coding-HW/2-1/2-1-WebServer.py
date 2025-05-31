@@ -1,5 +1,5 @@
-from socket import *
 import sys
+from socket import *
 
 # AF_INET is the address family for IPv4
 # SOCK_STREAM is the socket type for TCP
@@ -55,9 +55,7 @@ while True:
         connectionSocket.send("HTTP/1.1 404 Not Found\r\n".encode())
         connectionSocket.send("Content-Type: text/html\r\n".encode())
         connectionSocket.send("\r\n".encode())
-        connectionSocket.send(
-            "<html><body><h1>404 Not Found</h1></body></html>".encode()
-        )
+        connectionSocket.send("<html><body><h1>404 Not Found</h1></body></html>".encode())
         # Fill in end
 
         # Close the client connection socket
